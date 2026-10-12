@@ -3,7 +3,6 @@ import { useRouter, type Href } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { C, R } from '@/constants/theme';
-import { shadow } from '@/components/ui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ITEMS = [
@@ -12,6 +11,9 @@ const ITEMS = [
   { route: '/tugas', icon: 'list', label: 'Tugas' },
   { route: '/atur', icon: 'options', label: 'Atur' },
 ] as const;
+
+/** Height above the safe area: paddingTop 6 + bar (plus button 56 + paddingVertical 20). */
+export const NAV_HEIGHT = 82;
 
 export function BottomNav({ active }: { active: string }) {
   const router = useRouter();
@@ -26,7 +28,7 @@ export function BottomNav({ active }: { active: string }) {
         <Pressable
           accessibilityLabel="Tanam tugas baru"
           onPress={() => router.push('/tugas/baru' as Href)}
-          style={({ pressed }) => [styles.plus, shadow(C.coralDark, 4), pressed && styles.pressed]}>
+          style={({ pressed }) => [styles.plus, { boxShadow: `0 4px 0 ${C.coralDark}` }, pressed && styles.pressed]}>
           <Ionicons name="add" size={26} color={C.white} />
         </Pressable>
 
@@ -66,7 +68,8 @@ const styles = StyleSheet.create({
     borderRadius: R.nav,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    ...shadow(C.inkDeep, 8),
+    // Inline copy of shadow(C.inkDeep, 8) — avoids a ui.tsx <-> bottom-nav.tsx import cycle.
+    boxShadow: `0 8px 0 ${C.inkDeep}`,
   },
   item: { padding: 12, borderRadius: R.icon },
   itemActive: { backgroundColor: C.sun },

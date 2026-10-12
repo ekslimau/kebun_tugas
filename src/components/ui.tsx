@@ -2,8 +2,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { NAV_HEIGHT } from '@/components/bottom-nav';
 import { C, F, FS, R, Spacing, TapTarget } from '@/constants/theme';
 
 /** Hard offset shadow, the style the whole design uses. */
@@ -203,10 +204,11 @@ export function Divider() {
 }
 
 export function Scroll({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
+  const insets = useSafeAreaInsets();
   return (
     <ScrollView
       style={style}
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[styles.scrollContent, { paddingBottom: NAV_HEIGHT + insets.bottom + 16 }]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}>
       {children}
@@ -220,7 +222,7 @@ export function Dot({ color }: { color: string }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.cream },
-  scrollContent: { gap: Spacing.md, paddingHorizontal: Spacing.xl, paddingBottom: Spacing.xxl },
+  scrollContent: { gap: Spacing.md, paddingHorizontal: Spacing.xl },
   display: { fontFamily: F.display, color: C.ink, lineHeight: FS.h1 * 1.15 },
   center: { textAlign: 'center' },
   body: { fontFamily: F.body, fontSize: FS.body, color: C.ink },
