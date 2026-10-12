@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
@@ -10,11 +11,11 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { BackButton, Button, Chip, IconButton, Label, Pill, Screen, Title, ToggleRow } from '@/components/ui';
+import { BackButton, Button, Chip, FieldButton, IconButton, Label, Pill, Screen, Title, ToggleRow } from '@/components/ui';
 import { Plant, Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore, type TaskWithCourse } from '@/db';
-import { DAYS_SHORT, MINUTE, addDays, fmtDateLong, fmtTime, startOfDay } from '@/lib/date';
+import { DAYS_SHORT, addDays, fmtDateLong, fmtTime, startOfDay, startOfWeek } from '@/lib/date';
 import { dueLabel, stageOf } from '@/lib/tasks';
 
 const SIZES: { key: 'small' | 'medium' | 'large'; label: string }[] = [
@@ -23,16 +24,12 @@ const SIZES: { key: 'small' | 'medium' | 'large'; label: string }[] = [
   { key: 'large', label: 'Besar' },
 ];
 
-const HOURS = [...Array.from({ length: 18 }, (_, i) => (6 + i) * 60), 1439];
-
-const WEEKS = ['Minggu ini', 'Minggu depan', '+2 minggu', '+3 minggu', '+4 minggu'];
-const WEEK_MS = 7 * 24 * 60 * MINUTE;
 /** Leaf turns into a flower in ~800ms; the flower then holds for 600ms before leaving. */
 const BLOOM_MS = 800;
 const HOLD_MS = 600;
 
 export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
-  const { courses, saveTask, deleteTask, setDone } = useStore();
+  const { courses, tasks, saveTask, deleteTask, setDone } = useStore();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -40,10 +37,6 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [courseId, setCourseId] = useState<number | null>(initial?.course_id ?? null);
   const [due, setDue] = useState(() => initial?.due ?? today);
-  const [week, setWeek] = useState(() => {
-    const offset = Math.floor(((initial?.due ?? today) - today) / WEEK_MS);
-    return Math.min(WEEKS.length - 1, Math.max(0, offset));
-  });
   const [dueTime, setDueTime] = useState(initial?.due_time ?? 1439);
   const [size, setSize] = useState<'small' | 'medium' | 'large'>(initial?.size ?? 'medium');
   const [note, setNote] = useState(initial?.note ?? '');
@@ -61,11 +54,26 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
   }));
   const flowerStyle = useAnimatedStyle(() => ({ transform: [{ scale: flowerScale.value }] }));
 
-  const days = Array.from({ length: 7 }, (_, i) => addDays(today, week * 7 + i));
+  // Sen–Jum sesuai desain; Sabtu+Minggu muncul bila jadwal/tugas menyentuh akhir pekan.
+  const weekStart = startOfWeek(due);
+  const hasWeekend =
+    courses.some((c) => c.day === 0 || c.day === 6) ||
+    tasks.some((t) => [0, 6].includes(new Date(t.due).getDay()));
+  const dayCount = hasWeekend ? 7 : 5;
+  // weekStart = Senin; urutan Sen–Jum (± Sab, Min).
+  const days = Array.from({ length: dayCount }, (_, i) => addDays(weekStart, i));
 
-  const pickWeek = (next: number) => {
-    setWeek(next);
-    setDue(addDays(today, next * 7));
+  const pickTime = () => {
+    const base = new Date();
+    base.setHours(Math.floor(dueTime / 60), dueTime % 60, 0, 0);
+    DateTimePickerAndroid.open({
+      mode: 'time',
+      value: base,
+      is24Hour: true,
+      onChange: (_, picked) => {
+        if (picked) setDueTime(picked.getHours() * 60 + picked.getMinutes());
+      },
+    });
   };
 
   const save = async (done?: boolean) => {
@@ -143,42 +151,31 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
       <View style={styles.group}>
         <Label>Deadline</Label>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weekRow}>
-          {WEEKS.map((label, i) => (
-            <Chip key={label} selected={week === i} onPress={() => pickWeek(i)}>
-              {label}
-            </Chip>
-          ))}
-        </ScrollView>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weekRow}>
           {days.map((d) => {
             const isDue = due === d;
             return (
               <Chip
                 key={d}
                 selected={isDue}
-                onPress={() => {
-                  setDue(d);
-                  const offset = Math.round((d - today) / WEEK_MS);
-                  if (offset >= 0 && offset < WEEKS.length) setWeek(offset);
-                }}
+                onPress={() => setDue(d)}
                 style={styles.dayChip}>
-                <Text style={[styles.dayName, isDue && { color: C.white }]} numberOfLines={1}>
-                  {DAYS_SHORT[new Date(d).getDay()]}
-                </Text>
-                <Text style={[styles.dayNumber, isDue && { color: C.white }]} numberOfLines={1}>
-                  {new Date(d).getDate()}
-                </Text>
+                <View style={styles.dayChipInner}>
+                  <Text style={[styles.dayName, isDue && { color: C.white }]} numberOfLines={1}>
+                    {DAYS_SHORT[new Date(d).getDay()]}
+                  </Text>
+                  <Text
+                    style={[styles.dayNumber, isDue && { color: C.white }]}
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={1.1}>
+                    {new Date(d).getDate()}
+                  </Text>
+                </View>
               </Chip>
             );
           })}
         </ScrollView>
-        <View style={styles.wrap}>
-          {HOURS.map((m) => (
-            <Chip key={m} selected={dueTime === m} onPress={() => setDueTime(m)}>
-              {fmtTime(m)}
-            </Chip>
-          ))}
-        </View>
+        <Label>Jam deadline</Label>
+        <FieldButton value={fmtTime(dueTime)} placeholder="Pilih jam" icon="time" onPress={pickTime} />
       </View>
 
       <View style={styles.group}>
@@ -319,7 +316,8 @@ const styles = StyleSheet.create({
   },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   weekRow: { flexDirection: 'row', gap: 8, paddingRight: 8 },
-  dayChip: { width: 48, gap: 2, paddingHorizontal: 4, flexShrink: 0 },
+  dayChip: { width: 52, paddingHorizontal: 6, flexShrink: 0 },
+  dayChipInner: { alignItems: 'center', gap: 2 },
   dayName: { fontFamily: F.caption, fontSize: FS.caption, color: C.dim },
   dayNumber: { fontFamily: F.display, fontSize: FS.h3, color: C.ink, fontVariant: ['tabular-nums'] },
   row: {
@@ -334,5 +332,13 @@ const styles = StyleSheet.create({
   },
   rowLabel: { fontFamily: F.caption, fontSize: FS.caption, color: C.dim },
   rowValue: { fontFamily: F.body, fontSize: FS.body, color: C.ink },
-  footer: { paddingHorizontal: 20, paddingBottom: 24, gap: 8 },
+  footer: {
+    backgroundColor: C.cream,
+    borderTopWidth: 1,
+    borderTopColor: C.line,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 12,
+    gap: 8,
+  },
 });

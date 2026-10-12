@@ -2,7 +2,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter, type Href } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View, useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Dot, Pill, Screen, Scroll, Title, shadow } from '@/components/ui';
 import { Tugi } from '@/Asset';
@@ -15,7 +14,6 @@ export default function Kalender() {
   const { tasks, courses } = useStore();
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const narrow = width < 380;
   const [weekStart, setWeekStart] = useState(() => startOfWeek(Date.now()));
   const [selected, setSelected] = useState(() => startOfDay(Date.now()));
@@ -52,7 +50,7 @@ export default function Kalender() {
   return (
     <Screen>
       <Scroll>
-        <View style={[{ paddingHorizontal: Math.max(20, insets.left + 12) }, styles.header, narrow && styles.headerNarrow]}>
+        <View style={[styles.header, narrow && styles.headerNarrow]}>
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
@@ -131,7 +129,7 @@ export default function Kalender() {
           ))
         )}
 
-        {deadlines.length === 0 && classes.length > 0 ? (
+        {deadlines.length === 0 && classes.length > 0 && hasGap(classes) ? (
           <Pressable
             onPress={() => router.push('/tugas/baru' as Href)}
             style={{ backgroundColor: C.free, borderRadius: R.card, padding: 14 }}>
@@ -142,6 +140,12 @@ export default function Kalender() {
       </Scroll>
     </Screen>
   );
+}
+
+/** 'Waktu luang' card: there must be a real break — morning before 10.00 or ≥2h between classes. */
+function hasGap(classList: { start: number; end: number }[]) {
+  const sorted = [...classList].sort((a, b) => a.start - b.start);
+  return sorted[0].start >= 600 || sorted.some((c, i) => i > 0 && c.start - sorted[i - 1].end >= 120);
 }
 
 function Legend({ color, text }: { color: string; text: string }) {

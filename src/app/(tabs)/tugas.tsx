@@ -65,10 +65,10 @@ export default function DaftarTugas() {
           <Title>Daftar tugas</Title>
         </View>
 
-        <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-          <Chip selected={filter === 'all'} onPress={() => setFilter('all')}>{`Semua (${open.length})`}</Chip>
-          <Chip selected={filter === 'late'} onPress={() => setFilter('late')}>{`Terlambat (${late.length})`}</Chip>
-          <Chip selected={filter === 'week'} onPress={() => setFilter('week')}>{`Minggu ini (${week.length})`}</Chip>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Chip selected={filter === 'all'} onPress={() => setFilter('all')} style={styles.filterChip}>{`Semua ${open.length}`}</Chip>
+          <Chip selected={filter === 'late'} onPress={() => setFilter('late')} style={styles.filterChip}>{`Telat ${late.length}`}</Chip>
+          <Chip selected={filter === 'week'} onPress={() => setFilter('week')} style={styles.filterChip}>{`Pekan ini ${week.length}`}</Chip>
         </View>
 
         {shown.length === 0 ? (
@@ -226,6 +226,7 @@ function UndoToast({ onUndo }: { onUndo: () => void }) {
 
 const styles = {
   empty: { alignItems: 'center' as const, gap: 10, paddingVertical: 24 },
+  filterChip: { flex: 1, paddingHorizontal: 8 },
   card: { backgroundColor: C.white, borderRadius: R.card, padding: 14, shadowColor: C.line },
   cardHead: { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 12 },
   cardTitle: { fontFamily: F.display, fontSize: FS.h3, color: C.ink },
