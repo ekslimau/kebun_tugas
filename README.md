@@ -137,4 +137,5 @@ npx expo-doctor        # dependency audit
 
 ## 📄 License
 
-MIT © [ekslimau](https://github.com/ekslimau)
+Released under the [MIT License](./LICENSE) — free to use, modify, and ship.  
+© 2026 [ekslimau](https://github.com/ekslimau). Artwork (Tugi & the Kebun Tugas garden) © the project owner.
