@@ -3,139 +3,139 @@
 ![Expo SDK 57](https://img.shields.io/badge/Expo-SDK%2057-6B4EFF?logo=expo&logoColor=white)
 ![React Native 0.86](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
-![Offline First](https://img.shields.io/badge/Privacy-100%25%20Offline-34D3A5)
-![No Accounts](https://img.shields.io/badge/Accounts-none-FF7A66)
+![Privasi](https://img.shields.io/badge/Privasi-100%25%20Offline-34D3A5)
+![Akun](https://img.shields.io/badge/Akun-tidak%20ada-FF7A66)
 
 > **Rawat kebun belajarmu, panen nilai terbaikmu.**
-> A gamified, privacy-first task & course manager tailored for Indonesian university students.
+> Manajer tugas & jadwal kuliah untuk mahasiswa Indonesia — gamifikasi, ramah privasi.
 
-Built pixel-by-pixel from the `Kebun Tugas` Figma design system, one of the user product "design" for competition. Kebun Tugas is fully offline, battery-friendly, zero surveillance, zero accounts required.
+Dibangun piksel demi piksel dari design system Figma `Kebun Tugas`, salah satu produk desain untuk kompetisi. Sepenuhnya offline, hemat baterai, tanpa pengawasan, tanpa akun.
 
-Every assignment is a plant. Plant it, watch it grow as the deadline approaches, and it **blooms 🌸** the moment you finish on time. Miss the deadline, and it withers — your garden tells you the truth about your semester at a glance.
+Setiap tugas adalah tanaman. Tanam, pantau tumbuh menjelang deadline, dan ia **mekar 🌸** begitu kamu menyelesaikannya tepat waktu. Terlambat? Ia layu — kebunmu jujur menceritakan kondisi semestermu sekilas pandang.
 
 ---
 
-## 🌿 How Your Garden Grows
+## 🌿 Tahapan Tugasmu
 
-Every task renders as a hand-drawn SVG plant whose stage mirrors its status — no emoji, no clip-art:
+Setiap tugas tampil sebagai tanaman SVG gambar-tangan yang tahapnya mengikuti status — bukan emoji, bukan clip-art:
 
-| Stage | Status | Meaning |
+| Tahap | Status | Arti |
 |---|---|---|
-| 🌱 **Tunas** | Deadline ≤ 3 days | Freshly planted, needs attention soon |
-| 🌿 **Tumbuh** | Deadline far | Growing quietly in the background |
-| 🌸 **Mekar** | Selesai tepat waktu | Rewarded: +10 coins, streak grows |
-| 🥀 **Layu** | Telat | Coins still awarded, streak protected — honest, not punishing |
+| 🌱 **Tunas** | Deadline ≤ 3 hari | Baru ditanam, perlu perhatian |
+| 🌿 **Tumbuh** | Deadline masih jauh | Tumbuh tenang di latar |
+| 🌸 **Mekar** | Selesai tepat waktu | Diberi reward: +10 koin, streak bertambah |
+| 🥀 **Layu** | Terlambat | Koin tetap diberi, streak terjaga — jujur, tanpa menghukum |
 
 ---
 
-## ✨ Features
+## ✨ Fitur
 
-- **🌸 Bloom Animation:** Complete a task on time to trigger a celebratory bloom with smooth spring physics (Reanimated).
-- **🌱 Gamified Habit Loop:** Earn coins and streak points for timely submissions. Tasks finished past due date are marked **Selesai Terlambat** — coins awarded, streak protected.
-- **🪴 Friendly Empty States:** Fresh install starts with a truly empty garden — Tugi the mascot greets you on Beranda, Jadwal, Tugas, and Kalender ("Hari bebas!") with a nudge to plant your first task. Zero dummy data, zero hidden seeds.
-- **🛡️ Undo Safety Net:** Accidentally hit delete? A 4-second animated snackbar restores the task in full.
-- **📅 Smart Calendar & Course Timetable:** Week-by-week deadline picker (up to +4 weeks), recurring class alarms, and per-day agenda.
-- **🔔 Reliable Local Reminders:** Native exact alarms via `expo-notifications` (`3 hari`, `1 hari`, `3 jam` before) — scheduled on-device, delivered even offline.
-- **🌙 Onboarding that respects "no":** Decline notifications and get a gentle warning screen explaining exactly what you'll miss — then continue anyway.
-- **🔒 100% Offline & Private:** One SQLite file on your phone (`expo-sqlite`, schema v2, staged migrations). No server, no analytics, no accounts. Uninstall = everything gone.
+- **🌸 Animasi Mekar:** Selesaikan tugas tepat waktu → animasi bunga mekar dengan fisika spring (Reanimated).
+- **🌱 Loop Kebiasaan Bergamifikasi:** Kumpulkan koin & streak. Tugas selesai telat ditandai **Selesai Terlambat** — koin tetap diberi, streak terlindungi.
+- **🪴 Empty State yang Ramah:** Install baru = kebun benar-benar kosong — Tugi si maskot menyambutmu di Beranda, Jadwal, Tugas, dan Kalender ("Hari bebas!") sambil mengajak menanam tugas pertama. Nol data dummy, nol seed tersembunyi.
+- **🛡️ Jaring Pengaman Urungkan:** Salah hapus? Snackbar animasi 4 detik mengembalikan tugas utuh.
+- **📅 Kalender & Jadwal Kuliah Pintar:** Pemilih deadline per pekan (hingga +4 minggu), alarm kuliah berulang, agenda per hari.
+- **🔔 Pengingat Lokal Andal:** Exact alarm native via `expo-notifications` (`3 hari`, `1 hari`, `3 jam` sebelum) — dijadwalkan di perangkat, terkirim walau offline.
+- **🌙 Onboarding yang Menghormati "Tidak":** Tolak notifikasi dan dapat layar peringatan lembut yang menjelaskan apa yang akan terlewat — lalu lanjut saja.
+- **🔒 100% Offline & Privat:** Satu file SQLite di HP-mu (`expo-sqlite`, skema v2, migrasi bertahap). Tanpa server, tanpa analitik, tanpa akun. Uninstall = semua data hilang bersih.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Teknologi
 
-| Layer | Tooling |
+| Lapisan | Teknologi |
 |---|---|
 | **Framework** | [React Native 0.86](https://reactnative.dev/) + [Expo SDK 57](https://expo.dev/) (New Architecture, Hermes) |
-| **Routing** | [Expo Router](https://docs.expo.dev/router/introduction/) (file-based navigation, typed routes) |
-| **Storage** | [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/) — native SQLite with `PRAGMA user_version` migrations |
-| **Animations** | [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) (bloom, slide-out cards, undo toast) |
-| **Vector Art** | [react-native-svg](https://github.com/software-mansion/react-native-svg) — Tugi, plants & icons as inline SVG strings (`src/Asset.tsx`) |
-| **Notifications** | [expo-notifications](https://docs.expo.dev/versions/latest/sdk/notifications/) with deterministic IDs (`task-<id>-3d`) — cancel needs no lookup table |
-| **Typography** | Fredoka SemiBold (headings) & Nunito Bold/ExtraBold/Black (body) — only 4 weights bundled |
-| **Build** | EAS Build — R8 minify + resource shrinking, `arm64-v8a` split, AAB for Play Store |
+| **Routing** | [Expo Router](https://docs.expo.dev/router/introduction/) (navigasi berbasis file, typed routes) |
+| **Penyimpanan** | [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/) — SQLite native dengan migrasi `PRAGMA user_version` |
+| **Animasi** | [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) (mekar, kartu slide-out, toast urungkan) |
+| **Vektor** | [react-native-svg](https://github.com/software-mansion/react-native-svg) — Tugi, tanaman & ikon sebagai string SVG inline (`src/Asset.tsx`) |
+| **Notifikasi** | [expo-notifications](https://docs.expo.dev/versions/latest/sdk/notifications/) dengan ID deterministik (`task-<id>-3d`) — batal tanpa tabel pencarian |
+| **Tipografi** | Fredoka SemiBold (judul) & Nunito Bold/ExtraBold/Black (isi) — hanya 4 weight |
+| **Build** | EAS Build — R8 minify + shrink resource, split `arm64-v8a`, AAB untuk Play Store |
 
 ---
 
-## 📂 Project Structure
+## 📂 Struktur Proyek
 
 ```
 src/
-├── app/                  # Expo Router filesystem routes
-│   ├── (tabs)/           # Beranda · Kalender · Tugas · Atur (one custom pill nav)
-│   ├── onboarding/       # 3-step setup + "Nanti saja" warning screen
-│   ├── tugas/            # Task create + detail (bloom & delete live here)
-│   ├── matkul/           # Course list, create, edit
-│   └── atur/             # Reminder toggles
-├── components/           # UI kit, bottom nav, task/course forms, undo toast
-├── constants/            # Design tokens: palette, fonts, radii, tap targets
-├── db/                   # SQLite schema, migrations, reactive store provider
-├── lib/                  # Indonesian date helpers, status rules, scheduling
-├── Asset.tsx             # <Tugi/>, <Plant stage/>, <Icon name/> — SVG components
-└── assets.ts             # Auto-generated SVG strings (single source for artwork)
+├── app/                  # Rute Expo Router (filesystem)
+│   ├── (tabs)/           # Beranda · Kalender · Tugas · Atur (satu nav pil kustom)
+│   ├── onboarding/       # Setup 3 langkah + layar peringatan "Nanti saja"
+│   ├── tugas/            # Buat tugas + detail (animasi mekar & hapus ada di sini)
+│   ├── matkul/           # Daftar, buat, edit mata kuliah
+│   └── atur/             # Saklar pengingat
+├── components/           # UI kit, bottom nav, form tugas/matkul, toast urungkan
+├── constants/            # Token desain: palet, font, radius, target sentuh
+├── db/                   # Skema SQLite, migrasi, store provider reaktif
+├── lib/                  # Helper tanggal Indonesia, aturan status, penjadwalan
+├── Asset.tsx             # <Tugi/>, <Plant stage/>, <Icon name/> — komponen SVG
+└── assets.ts             # String SVG auto-generate (sumber tunggal karya)
 plugins/
-└── gradle-abi.js         # arm64-only release packaging (size)
-assets/app/               # Launcher icon, adaptive icon, splash, favicon
+└── gradle-abi.js         # Packaging rilis arm64-only (hemat ukuran)
+assets/app/               # Ikon launcher, adaptive icon, splash, favicon
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Mulai
 
-### Prerequisites
+### Prasyarat
 - Node.js 20+
-- JDK 17 or 21 (local Android compile)
-- An Android device — **Expo Go will not work** (`expo-sqlite` / `expo-notifications` are native modules)
+- JDK 17 atau 21 (kompilasi Android lokal)
+- Perangkat Android — **Expo Go tidak bisa dipakai** (`expo-sqlite` / `expo-notifications` adalah modul native)
 
-### Development
+### Pengembangan
 
 ```bash
 git clone https://github.com/ekslimau/kebun_tugas.git
 cd kebun_tugas
 npm install
-npx expo start          # dev client required
-npx expo run:android    # or build natively
+npx expo start          # wajib dev client
+npx expo run:android    # atau build native
 ```
 
-### Shipping
+### Rilis
 
 ```bash
-# Play Store (AAB, auto version increment)
+# Play Store (AAB, version code naik otomatis)
 bunx eas-cli build --profile production --platform android
 
-# Sideload test APK (arm64-v8a, minified)
+# APK uji sideload (arm64-v8a, ter-minify)
 bunx eas-cli build --profile preview --platform android
 ```
 
-### Quality gates
+### Gerbang kualitas
 
 ```bash
-npx tsc --noEmit       # types
+npx tsc --noEmit       # tipe
 npx expo lint          # eslint
-npx expo-doctor        # dependency audit
+npx expo-doctor        # audit dependensi
 ```
 
 ---
 
-## 📱 Test Plan (fresh install)
+## 📱 Rencana Uji (install baru)
 
-1. **Uninstall → install** → every screen empty, streak `0`, coins `0`
-2. Onboard: name → semester → jadwal → notifications ("Nanti saja" shows the warning screen)
-3. Tanam tugas with a deadline past the week picker → pick "+2 minggu"
-4. Tandai selesai → bloom plays → coins +10, streak +1
-5. Create an overdue task → finish it → **Selesai Terlambat** badge, streak intact
-6. Delete a task → snackbar → **Urungkan** restores it
-
----
-
-## 🌿 Roadmap / Polish Items
-
-- [ ] Database export/backup to JSON (local file share)
-- [ ] Widget: today's garden on the home screen
-- [ ] i18n: full EN locale alongside Bahasa Indonesia
+1. **Uninstall → install** → semua layar kosong, streak `0`, koin `0`
+2. Onboarding: nama → semester → jadwal → notifikasi ("Nanti saja" memunculkan layar peringatan)
+3. Tanam tugas dengan deadline lewat pemilih pekan → pilih "+2 minggu"
+4. Tandai selesai → animasi mekar → koin +10, streak +1
+5. Buat tugas telat → selesaikan → badge **Selesai Terlambat**, streak utuh
+6. Hapus tugas → snackbar → **Urungkan** mengembalikannya
 
 ---
 
-## 📄 License
+## 🌿 Rencana Lanjutan
 
-Released under the [MIT License](./LICENSE) — free to use, modify, and ship.  
-© 2026 [ekslimau](https://github.com/ekslimau). Artwork (Tugi & the Kebun Tugas garden) © the project owner.
+- [ ] Ekspor/cadangan database ke JSON (bagikan file lokal)
+- [ ] Widget: kebun hari ini di home screen
+- [ ] i18n: locale EN lengkap bersama Bahasa Indonesia
+
+---
+
+## 📄 Lisensi
+
+Dirilis di bawah [Lisensi MIT](./LICENSE) — bebas dipakai, diubah, dan dirilis.  
+© 2026 [ekslimau](https://github.com/ekslimau). Karya seni (Tugi & taman Kebun Tugas) © pemilik proyek.
