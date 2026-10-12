@@ -49,6 +49,20 @@ export const fmtMonth = (ms: number) => {
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 };
 
+/**
+ * Header title for the visible week (first & last of `days`).
+ * 'Oktober 2026' · 'Okt–Nov 2026' · 'Des 2026–Jan 2027' — never empty.
+ */
+export const fmtWeekTitle = (days: number[], _selected: number) => {
+  const a = new Date(days[0]);
+  const b = new Date(days[days.length - 1]);
+  if (a.getFullYear() !== b.getFullYear())
+    return `${MONTHS_SHORT[a.getMonth()]} ${a.getFullYear()}–${MONTHS_SHORT[b.getMonth()]} ${b.getFullYear()}`;
+  if (a.getMonth() !== b.getMonth())
+    return `${MONTHS_SHORT[a.getMonth()]}–${MONTHS_SHORT[b.getMonth()]} ${b.getFullYear()}`;
+  return `${MONTHS[a.getMonth()]} ${a.getFullYear()}`;
+};
+
 /** Whole days from today (negative = past). */
 export const daysFromToday = (ms: number) =>
   Math.round((startOfDay(ms) - startOfDay(Date.now())) / (24 * 60 * MINUTE));

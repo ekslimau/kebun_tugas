@@ -1,25 +1,50 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRouter, type Href } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { useRouter, useLocalSearchParams, type Href } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 
 import { Dot, Pill, Screen, Scroll, Title, shadow } from '@/components/ui';
 import { Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
-import { DAYS_SHORT, fmtDateLong, fmtMonth, fmtTime, startOfDay, startOfWeek } from '@/lib/date';
+import {
+  DAYS_SHORT,
+  fmtDateLong,
+  fmtTime,
+  fmtWeekTitle,
+  startOfDay,
+  startOfWeek,
+} from '@/lib/date';
 import { coursesOn, deadlineOf, dueLabel } from '@/lib/tasks';
 
 export default function Kalender() {
   const { tasks, courses } = useStore();
   const router = useRouter();
-  const { width } = useWindowDimensions();
-  const narrow = width < 380;
+  const { tanggal } = useLocalSearchParams<{ tanggal?: string }>();
   const [weekStart, setWeekStart] = useState(() => startOfWeek(Date.now()));
   const [selected, setSelected] = useState(() => startOfDay(Date.now()));
+  // Available width for the title, measured once laid out (fallback for adjustsFontSizeToFit).
+  const [titleWidth, setTitleWidth] = useState(0);
+
+  // Deep-link support: /tabs/kalender?tanggal=<epoch ms> (used by Beranda later).
+  useEffect(() => {
+    const ms = Number(tanggal);
+    if (!tanggal || !Number.isFinite(ms)) return;
+    // Microtask: effect must not setState synchronously (lint react-compiler).
+    queueMicrotask(() => {
+      setWeekStart(startOfWeek(ms));
+      setSelected(startOfDay(ms));
+    });
+  }, [tanggal]);
 
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => startOfDay(weekStart + i * 86_400_000)), [weekStart]);
   const dayOf = (ms: number) => new Date(ms).getDay();
+
+  const title = fmtWeekTitle(days, selected);
+  // ~0.66em average glyph width for Fredoka SemiBold (incl. safety) → shrink manually if needed.
+  const titleSize = titleWidth
+    ? Math.max(18, Math.min(FS.h1, Math.floor((titleWidth - 2) / (title.length * 0.66))))
+    : FS.h1;
 
   const classes = coursesOn(courses, dayOf(selected));
   const deadlines = tasks.filter((t) => !t.done && t.due === selected).sort((a, b) => deadlineOf(a) - deadlineOf(b));
@@ -50,22 +75,41 @@ export default function Kalender() {
   return (
     <Screen>
       <Scroll>
-        <View style={[styles.header, narrow && styles.headerNarrow]}>
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.7}
-            style={styles.monthTitle}>
-            {fmtMonth(selected)}
-          </Text>
+        <View style={styles.header}>
+          <View
+            style={styles.titleBox}
+            onLayout={(e) => {
+              const w = e.nativeEvent.layout.width;
+              if (__DEV__) console.log(`[kalender] title box width: ${Math.round(w)}dp for "${title}"`);
+              setTitleWidth((prev) => (Math.abs(prev - w) > 0.5 ? w : prev));
+            }}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.6}
+              maxFontSizeMultiplier={1.2}
+              style={[styles.monthTitle, { fontSize: titleSize, lineHeight: Math.round(titleSize * 1.2) }]}>
+              {title}
+            </Text>
+          </View>
           <View style={styles.headerButtons}>
-            <Pressable accessibilityLabel="Pekan sebelumnya" onPress={() => shiftWeek(-1)} style={[styles.round, shadow(C.line)]}>
+            <Pressable
+              accessibilityLabel="Pekan sebelumnya"
+              hitSlop={4}
+              onPress={() => shiftWeek(-1)}
+              style={[styles.round, shadow(C.line)]}>
               <Ionicons name="chevron-back" size={18} color={C.ink} />
             </Pressable>
             <View style={[styles.pill, shadow(C.line)]}>
-              <Text style={styles.pillText}>Minggu</Text>
+              <Text style={styles.pillText} maxFontSizeMultiplier={1.2}>
+                Minggu
+              </Text>
             </View>
-            <Pressable accessibilityLabel="Pekan berikutnya" onPress={() => shiftWeek(1)} style={[styles.round, shadow(C.line)]}>
+            <Pressable
+              accessibilityLabel="Pekan berikutnya"
+              hitSlop={4}
+              onPress={() => shiftWeek(1)}
+              style={[styles.round, shadow(C.line)]}>
               <Ionicons name="chevron-forward" size={18} color={C.ink} />
             </Pressable>
           </View>
@@ -158,20 +202,18 @@ function Legend({ color, text }: { color: string; text: string }) {
 }
 
 const styles = {
-  header: { alignItems: 'center' as const, gap: 8 },
-  headerNarrow: { alignItems: 'stretch' as const, gap: 10 },
+  header: { flexDirection: 'row' as const, alignItems: 'center' as const },
+  titleBox: { flex: 1, minWidth: 0, marginRight: 8 },
   monthTitle: {
-    flex: 1,
-    flexShrink: 1,
     fontFamily: F.display,
     fontSize: FS.h1,
-    lineHeight: FS.h1 * 1.15,
+    lineHeight: FS.h1 * 1.2,
     color: C.ink,
   },
-  headerButtons: { flexShrink: 0, flexDirection: 'row' as const, alignItems: 'center' as const, gap: 8 },
-  round: { width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: 'center' as const, justifyContent: 'center' as const },
-  pill: { backgroundColor: C.white, borderRadius: R.pill, paddingHorizontal: 14, paddingVertical: 8 },
-  pillText: { fontFamily: F.body, fontSize: FS.body, color: C.ink },
+  headerButtons: { flexShrink: 0, flexDirection: 'row' as const, alignItems: 'center' as const, gap: 6 },
+  round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.white, alignItems: 'center' as const, justifyContent: 'center' as const },
+  pill: { height: 36, justifyContent: 'center' as const, backgroundColor: C.white, borderRadius: R.pill, paddingHorizontal: 10 },
+  pillText: { fontFamily: F.body, fontSize: FS.caption, color: C.ink },
   dayTile: { flex: 1, alignItems: 'center' as const, gap: 2, paddingVertical: 12, borderRadius: 20 },
   dayName: { fontFamily: F.caption, fontSize: FS.caption, color: C.dim },
   dayNumber: { fontFamily: F.display, fontSize: FS.h3, color: C.ink },
