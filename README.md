@@ -3,7 +3,7 @@
 > **Rawat kebun belajarmu, panen nilai terbaikmu.**  
 > A gamified, privacy-first task & course manager tailored for Indonesian university students.
 
-Built pixel-by-pixel from the `INCEPTION-UI-UX - Kebun Tugas` Figma design system. Fully offline, battery-friendly, zero surveillance, zero accounts required.
+Built pixel-by-pixel from the `Kebun Tugas` Figma design system, one of the user product "design" for competition. Kebun Tugas is fully offline, battery-friendly, zero surveillance, zero accounts required.
 
 ---
 
