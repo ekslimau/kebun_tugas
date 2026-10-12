@@ -4,10 +4,11 @@ import { Animated as RNAnimated, Pressable, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { Body, Chip, Dot, Screen, Scroll, Title, shadow } from '@/components/ui';
+import { Plant, Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore, type TaskWithCourse } from '@/db';
 import { DAYS_SHORT } from '@/lib/date';
-import { dueLabel, emojiFor, statusOf, upcoming } from '@/lib/tasks';
+import { dueLabel, stageOf, statusOf, upcoming } from '@/lib/tasks';
 
 type Filter = 'all' | 'late' | 'week';
 
@@ -70,7 +71,14 @@ export default function DaftarTugas() {
           <Chip selected={filter === 'week'} onPress={() => setFilter('week')}>{`Minggu ini (${week.length})`}</Chip>
         </View>
 
-        {shown.length === 0 ? <Body style={{ color: C.dim }}>Nggak ada tugas di filter ini. Aman! 🌿</Body> : null}
+        {shown.length === 0 ? (
+          <View style={styles.empty}>
+            <Tugi size={88} />
+            <Body style={{ color: C.dim, textAlign: 'center' }}>
+              {open.length === 0 ? 'Belum ada tugas, yuk tanam yang pertama!' : 'Nggak ada tugas di filter ini. Aman!'}
+            </Body>
+          </View>
+        ) : null}
 
         {shownLate.length > 0 ? (
           <>
@@ -164,7 +172,7 @@ function TaskCard({
         ]}>
         <View style={styles.cardHead}>
           <View style={{ backgroundColor: C.lavender, borderRadius: 16, padding: 8 }}>
-            <Text style={{ fontSize: 21 }}>{emojiFor(task)}</Text>
+            <Plant stage={stageOf(task)} size={26} />
           </View>
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={styles.cardTitle}>{task.title}</Text>
@@ -217,6 +225,7 @@ function UndoToast({ onUndo }: { onUndo: () => void }) {
 }
 
 const styles = {
+  empty: { alignItems: 'center' as const, gap: 10, paddingVertical: 24 },
   card: { backgroundColor: C.white, borderRadius: R.card, padding: 14, shadowColor: C.line },
   cardHead: { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 12 },
   cardTitle: { fontFamily: F.display, fontSize: FS.h3, color: C.ink },

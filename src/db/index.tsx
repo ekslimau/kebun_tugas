@@ -50,7 +50,7 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   onboarded: '0',
   name: '',
   semester: '1',
-  coins: '120',
+  coins: '0',
   notify_3d: '1',
   notify_1d: '1',
   notify_3h: '1',
@@ -107,60 +107,6 @@ async function migrate(conn: SQLiteDatabase) {
   if (version < 2) {
     await conn.execAsync(`ALTER TABLE tasks ADD COLUMN late INTEGER NOT NULL DEFAULT 0;`);
     await conn.execAsync(`PRAGMA user_version = 2`);
-  }
-}
-
-/** First-run sample data, matching the content the design shows. */
-async function seedSampleData(conn: SQLiteDatabase) {
-  const seeded = await conn.getFirstAsync<{ value: string }>(
-    "SELECT value FROM settings WHERE key = 'seeded'"
-  );
-  if (seeded?.value === '1') return;
-  await conn.runAsync("INSERT OR REPLACE INTO settings (key, value) VALUES ('seeded', '1')");
-  await insertSampleData(conn);
-}
-
-async function insertSampleData(conn: SQLiteDatabase) {
-  const courses: CourseInput[] = [
-    { name: 'Basis Data', lecturer: 'Pak Budi, M.Kom', day: 1, start: 480, end: 580, color: COURSE_COLORS[0] },
-    { name: 'Struktur Data', lecturer: 'Bu Sri, M.T', day: 2, start: 600, end: 700, color: COURSE_COLORS[1] },
-    { name: 'Kewarganegaraan', lecturer: 'Pak Andi', day: 3, start: 780, end: 880, color: COURSE_COLORS[2] },
-  ];
-  for (const c of courses) {
-    await conn.runAsync(
-      'INSERT INTO courses (name, lecturer, day, start, end, color) VALUES (?, ?, ?, ?, ?, ?)',
-      c.name,
-      c.lecturer,
-      c.day,
-      c.start,
-      c.end,
-      c.color
-    );
-  }
-
-  const today = startOfDay(Date.now());
-  const samples: [string, number, number, Task['size']][] = [
-    ['Makalah Kewarganegaraan', 2, -2, 'small'],
-    ['Laporan Praktikum', 0, -1, 'medium'],
-    ['Kuis Struktur Data', 1, 3, 'medium'],
-    ['Tugas Normalisasi', 0, 4, 'small'],
-    ['Proposal Proyek Akhir', 1, 16, 'large'],
-    ['Esai Pancasila', 2, 21, 'medium'],
-  ];
-  for (const [title, courseId, dayOffset, size] of samples) {
-    await conn.runAsync(
-      'INSERT INTO tasks (title, course_id, due, due_time, note, size, remind_3d, remind_1d, remind_3h, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      title,
-      courseId + 1,
-      addDays(today, dayOffset),
-      1439, // 23.59, the deadline time the design uses
-      '',
-      size,
-      1,
-      dayOffset <= 1 ? 1 : 0,
-      0,
-      Date.now()
-    );
   }
 }
 
@@ -227,7 +173,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     (async () => {
       const conn = await db();
       await migrate(conn);
-      await seedSampleData(conn);
       await load();
       setReady(true);
     })();
@@ -366,7 +311,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     await conn.execAsync('DELETE FROM tasks; DELETE FROM courses;');
     await cancelAllFor('task-');
     await cancelAllFor('course-');
-    await insertSampleData(conn);
     await load();
   }, [load]);
 

@@ -3,10 +3,11 @@ import { useRouter, type Href } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { Body, Label, Pill, Screen, Scroll, Title, shadow } from '@/components/ui';
+import { Icon, Plant, Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
 import { DAYS_SHORT, MINUTE, fmtDate, fmtTime } from '@/lib/date';
-import { coursesOn, dueLabel, statusOf, upcoming } from '@/lib/tasks';
+import { coursesOn, dueLabel, stageOf, statusOf, upcoming } from '@/lib/tasks';
 
 export default function Beranda() {
   const { profile, tasks, courses, settings, streak } = useStore();
@@ -46,7 +47,7 @@ export default function Beranda() {
 
         {overdue.length > 0 ? (
           <View style={styles.banner}>
-            <Text style={styles.bannerEmoji}>🌱</Text>
+            <Plant stage="layu" size={40} />
             <View style={{ flex: 1, gap: 2 }}>
               <Text style={styles.bannerTitle}>{overdue.length} tugas terlewat</Text>
               <Text style={styles.bannerText}>
@@ -61,7 +62,14 @@ export default function Beranda() {
 
         <Title size="h2">Hari ini</Title>
         {agenda.length === 0 ? (
-          <Body style={{ color: C.dim }}>Belum ada agenda hari ini. Santai dulu 🌿</Body>
+          <View style={styles.empty}>
+            <Tugi size={72} />
+            <Body style={{ color: C.dim, textAlign: 'center' }}>Belum ada tugas, yuk tanam yang pertama!</Body>
+            <Pressable onPress={() => router.push('/tugas/baru' as Href)} style={styles.emptyBtn}>
+              <Icon name="plus" size={16} color={C.white} />
+              <Text style={styles.emptyBtnText}>Tanam tugas</Text>
+            </Pressable>
+          </View>
         ) : (
           agenda.map((row, i) => (
             <View key={`${row.kind}-${i}`} style={styles.agendaRow}>
@@ -88,7 +96,7 @@ export default function Beranda() {
                 key={t.id}
                 onPress={() => router.push(`/tugas/${t.id}` as Href)}
                 style={[styles.taskCard, { backgroundColor: C.skySoft }]}>
-                <Text style={styles.taskEmoji}>🌱</Text>
+                <Plant stage={stageOf(t)} size={44} />
                 <View style={{ flex: 1, gap: 4 }}>
                   <Text style={styles.rowTitle}>{t.title}</Text>
                   <Text style={styles.rowMeta}>
@@ -143,6 +151,16 @@ const styles = {
     padding: 14,
   },
   bannerEmoji: { fontSize: 40 },
+  empty: { alignItems: 'center' as const, gap: 10, paddingVertical: 20 },  emptyBtn: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 6,
+    backgroundColor: C.purple,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  emptyBtnText: { fontFamily: F.caption, fontSize: FS.caption, color: C.white },
   bannerTitle: { fontFamily: F.display, fontSize: FS.h3, color: C.warn },
   bannerText: { fontFamily: F.caption, fontSize: FS.caption, color: C.warn },
   bannerButton: { backgroundColor: C.coral, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10 },

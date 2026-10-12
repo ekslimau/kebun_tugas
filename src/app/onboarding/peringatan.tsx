@@ -3,6 +3,7 @@ import { useRouter, type Href } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button, Label, Screen, Scroll, Title } from '@/components/ui';
+import { Icon } from '@/Asset';
 import { C, F, FS } from '@/constants/theme';
 import { useStore } from '@/db';
 
@@ -26,7 +27,7 @@ export default function OnboardingPeringatan() {
     <Screen>
       <Scroll>
         <View style={styles.hero}>
-          <Text style={styles.emoji}>🔕</Text>
+          <Icon name="bell-off" size={44} color={C.dim} />
         </View>
 
         <Title center>App tidak bisa ingatkan kamu</Title>
@@ -61,8 +62,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   emoji: { fontSize: 64 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  icon: {
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },  icon: {
     width: 40,
     height: 40,
     borderRadius: 12,

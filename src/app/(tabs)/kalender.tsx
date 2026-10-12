@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { Dot, Pill, Screen, Scroll, Title, shadow } from '@/components/ui';
+import { Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
 import { DAYS_SHORT, fmtDateLong, fmtMonth, fmtTime, startOfDay, startOfWeek } from '@/lib/date';
@@ -98,9 +99,12 @@ export default function Kalender() {
 
         <Title size="h2">{fmtDateLong(selected)}</Title>
         {agenda.length === 0 ? (
-          <Text style={{ fontFamily: F.body, fontSize: FS.body, color: C.dim }}>
-            Kosong. Waktu luang — cocok buat nyicil tugas 🌿
-          </Text>
+          <View style={{ alignItems: 'center', gap: 8, paddingVertical: 12 }}>
+            <Tugi size={72} />
+            <Text style={{ fontFamily: F.body, fontSize: FS.body, color: C.dim, textAlign: 'center' }}>
+              Hari bebas! Waktu luang — cocok buat nyicil tugas
+            </Text>
+          </View>
         ) : (
           agenda.map((row, i) => (
             <View key={`${row.title}-${i}`} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>

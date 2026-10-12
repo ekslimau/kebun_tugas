@@ -10,10 +10,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { BackButton, Button, Chip, IconButton, Label, Pill, Screen, Title, ToggleRow } from '@/components/ui';
+import { Plant, Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore, type TaskWithCourse } from '@/db';
 import { DAYS_SHORT, MINUTE, addDays, fmtDateLong, fmtTime, startOfDay } from '@/lib/date';
-import { dueLabel, emojiFor } from '@/lib/tasks';
+import { dueLabel, stageOf } from '@/lib/tasks';
 
 const SIZES: { key: 'small' | 'medium' | 'large'; label: string }[] = [
   { key: 'small', label: 'Kecil' },
@@ -201,7 +202,7 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
           <BackButton />
           <View style={styles.titleRow}>
             <Title>Tanam tugas baru</Title>
-            <Text style={{ fontSize: 48 }}>🧅</Text>
+            <Tugi size={48} />
           </View>
           {fields}
         </ScrollView>
@@ -223,8 +224,12 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
 
         <View style={{ alignItems: 'center', gap: 8 }}>
           <View style={styles.heroEmoji}>
-            <Animated.Text style={[styles.heroGlyph, leafStyle]}>{emojiFor(initial)}</Animated.Text>
-            <Animated.Text style={[styles.heroGlyph, styles.heroFlower, flowerStyle]}>🌸</Animated.Text>
+            <Animated.View style={[styles.heroGlyph, leafStyle]}>
+              <Plant stage={stageOf(initial)} size={40} />
+            </Animated.View>
+            <Animated.View style={[styles.heroGlyph, styles.heroFlower, flowerStyle]}>
+              <Plant stage="mekar" size={40} />
+            </Animated.View>
           </View>
           <Title center>{initial.title}</Title>
           {initial.done && initial.late ? (
@@ -274,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroGlyph: { fontSize: 44 },
+  heroGlyph: { alignItems: 'center' as const, justifyContent: 'center' as const },
   heroFlower: { position: 'absolute' },
   lateBadge: { fontFamily: F.caption, fontSize: FS.caption, color: C.coral },
   group: { gap: 8 },

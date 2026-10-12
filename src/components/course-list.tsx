@@ -3,6 +3,7 @@ import { useRouter, type Href } from 'expo-router';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { Body, shadow } from '@/components/ui';
+import { Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
 import { DAYS, fmtTime } from '@/lib/date';
@@ -12,7 +13,13 @@ export function CourseList() {
   const router = useRouter();
 
   if (courses.length === 0) {
-    return <Body style={{ color: C.dim }}>Belum ada mata kuliah. Tambahkan jadwalmu dulu ya.</Body>;
+    return (
+      <View style={{ alignItems: 'center', gap: 10, paddingVertical: 16 }}>
+        <Tugi size={88} />
+        <Body style={{ color: C.dim, textAlign: 'center' }}>Belum ada jadwal kuliah</Body>
+        <AddCourseButton onPress={() => router.push('/matkul/baru' as Href)} />
+      </View>
+    );
   }
 
   return (

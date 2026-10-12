@@ -23,21 +23,23 @@ export function dueLabel(t: TaskWithCourse): string {
   return `${days} hari lagi`;
 }
 
-/** Plant that reflects how urgent a task is, as used throughout the design. */
-export const emojiFor = (t: TaskWithCourse) => {
+/** Plant growth stage reflecting how urgent a task is: layu=telat, mekar=selesai, tunas/tumbuh=aktif. */
+export type Stage = 'tunas' | 'tumbuh' | 'mekar' | 'layu';
+
+export function stageOf(t: TaskWithCourse): Stage {
   switch (statusOf(t)) {
     case 'overdue':
-      return '🥀';
+      return 'layu';
     case 'done':
     case 'done_late':
-      return '🌸';
+      return 'mekar';
     case 'today':
     case 'soon':
-      return '🌱';
+      return 'tunas';
     default:
-      return '🌿';
+      return 'tumbuh';
   }
-};
+}
 
 /** Overdue first (oldest first = highest priority), then by soonest deadline. */
 export const sortTasks = (tasks: TaskWithCourse[]) =>

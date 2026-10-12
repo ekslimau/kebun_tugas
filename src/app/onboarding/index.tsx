@@ -4,6 +4,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { StepHeader } from '@/components/onboarding';
 import { Button, Chip, Label, Screen, Scroll, Title, shadow } from '@/components/ui';
+import { Tugi } from '@/Asset';
 import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
 
@@ -24,7 +25,7 @@ export default function OnboardingProfil() {
         <StepHeader step={1} />
 
         <View style={styles.mascotRow}>
-          <Text style={styles.mascot}>🧅</Text>
+          <Tugi size={72} />
           <View style={[styles.bubble, shadow(C.line)]}>
             <Text style={styles.bubbleText}>
               Halo! Aku Tugi. Kenalan dulu yuk, biar aku bisa bantu kamu.
@@ -63,7 +64,6 @@ export default function OnboardingProfil() {
 
 const styles = StyleSheet.create({
   mascotRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  mascot: { fontSize: 64 },
   bubble: { flex: 1, backgroundColor: C.white, borderRadius: 20, padding: 14 },
   bubbleText: { fontFamily: F.body, fontSize: FS.body, color: C.ink },
   input: {
