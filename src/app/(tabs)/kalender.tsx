@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter, type Href } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Dot, Pill, Screen, Scroll, Title, shadow } from '@/components/ui';
 import { Tugi } from '@/Asset';
@@ -13,6 +14,9 @@ import { coursesOn, deadlineOf, dueLabel } from '@/lib/tasks';
 export default function Kalender() {
   const { tasks, courses } = useStore();
   const router = useRouter();
+  const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const narrow = width < 380;
   const [weekStart, setWeekStart] = useState(() => startOfWeek(Date.now()));
   const [selected, setSelected] = useState(() => startOfDay(Date.now()));
 
@@ -48,18 +52,25 @@ export default function Kalender() {
   return (
     <Screen>
       <Scroll>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Title>{fmtMonth(selected)}</Title>
-          <View style={{ flex: 1 }} />
-          <Pressable accessibilityLabel="Pekan sebelumnya" onPress={() => shiftWeek(-1)} style={[styles.round, shadow(C.line)]}>
-            <Ionicons name="chevron-back" size={18} color={C.ink} />
-          </Pressable>
-          <View style={[styles.pill, shadow(C.line)]}>
-            <Text style={styles.pillText}>Minggu</Text>
+        <View style={[{ paddingHorizontal: Math.max(20, insets.left + 12) }, styles.header, narrow && styles.headerNarrow]}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            style={styles.monthTitle}>
+            {fmtMonth(selected)}
+          </Text>
+          <View style={styles.headerButtons}>
+            <Pressable accessibilityLabel="Pekan sebelumnya" onPress={() => shiftWeek(-1)} style={[styles.round, shadow(C.line)]}>
+              <Ionicons name="chevron-back" size={18} color={C.ink} />
+            </Pressable>
+            <View style={[styles.pill, shadow(C.line)]}>
+              <Text style={styles.pillText}>Minggu</Text>
+            </View>
+            <Pressable accessibilityLabel="Pekan berikutnya" onPress={() => shiftWeek(1)} style={[styles.round, shadow(C.line)]}>
+              <Ionicons name="chevron-forward" size={18} color={C.ink} />
+            </Pressable>
           </View>
-          <Pressable accessibilityLabel="Pekan berikutnya" onPress={() => shiftWeek(1)} style={[styles.round, shadow(C.line)]}>
-            <Ionicons name="chevron-forward" size={18} color={C.ink} />
-          </Pressable>
         </View>
 
         <View style={{ flexDirection: 'row', gap: 6 }}>
@@ -111,7 +122,7 @@ export default function Kalender() {
               <Text style={styles.time}>{fmtTime(row.at)}</Text>
               <View style={[styles.agendaCard, { backgroundColor: row.color }]}>
                 <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={styles.agendaTitle}>{row.title}</Text>
+                  <Text style={styles.agendaTitle} numberOfLines={1} ellipsizeMode="tail">{row.title}</Text>
                   <Text style={styles.agendaMeta}>{row.meta}</Text>
                 </View>
                 {row.pill ? <Pill>{row.pill}</Pill> : null}
@@ -143,6 +154,17 @@ function Legend({ color, text }: { color: string; text: string }) {
 }
 
 const styles = {
+  header: { alignItems: 'center' as const, gap: 8 },
+  headerNarrow: { alignItems: 'stretch' as const, gap: 10 },
+  monthTitle: {
+    flex: 1,
+    flexShrink: 1,
+    fontFamily: F.display,
+    fontSize: FS.h1,
+    lineHeight: FS.h1 * 1.15,
+    color: C.ink,
+  },
+  headerButtons: { flexShrink: 0, flexDirection: 'row' as const, alignItems: 'center' as const, gap: 8 },
   round: { width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: 'center' as const, justifyContent: 'center' as const },
   pill: { backgroundColor: C.white, borderRadius: R.pill, paddingHorizontal: 14, paddingVertical: 8 },
   pillText: { fontFamily: F.body, fontSize: FS.body, color: C.ink },

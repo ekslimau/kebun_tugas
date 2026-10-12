@@ -19,7 +19,11 @@ export function Screen({ children, style }: { children: ReactNode; style?: Style
 
 export function Title({ children, size = 'h1', center }: { children: ReactNode; size?: 'h1' | 'h2' | 'h3'; center?: boolean }) {
   const fontSize = size === 'h1' ? FS.h1 : size === 'h2' ? FS.h2 : FS.h3;
-  return <Text style={[styles.display, { fontSize }, center && styles.center]}>{children}</Text>;
+  return (
+    <Text style={[styles.display, { fontSize }, center && styles.center]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+      {children}
+    </Text>
+  );
 }
 
 export function Label({ children, style }: { children: ReactNode; style?: StyleProp<import('react-native').TextStyle> }) {

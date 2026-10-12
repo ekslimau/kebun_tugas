@@ -8,7 +8,7 @@ import { C, F, FS, R } from '@/constants/theme';
 import { useStore } from '@/db';
 
 export default function Atur() {
-  const { profile, saveProfile, reset, tasks } = useStore();
+  const { profile, saveProfile, reset, courses } = useStore();
   const router = useRouter();
   const [name, setName] = useState(profile.name);
   const [semester, setSemester] = useState(profile.semester);
@@ -54,7 +54,7 @@ export default function Atur() {
         <NavRow
           icon="calendar"
           label="Jadwal kuliah semesteran"
-          hint={`${tasks.length} tugas tercatat`}
+          hint={courses.length > 0 ? `${courses.length} mata kuliah` : 'Belum ada jadwal'}
           onPress={() => router.push('/matkul' as Href)}
         />
         <NavRow
@@ -65,13 +65,13 @@ export default function Atur() {
 
         <Pressable
           onPress={() =>
-            Alert.alert('Ulangi data contoh', 'Semua tugas dan mata kuliah akan diganti data contoh.', [
+            Alert.alert('Hapus semua data', 'Semua tugas dan mata kuliah akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.', [
               { text: 'Batal', style: 'cancel' },
-              { text: 'Lanjut', style: 'destructive', onPress: () => reset() },
+              { text: 'Hapus', style: 'destructive', onPress: () => reset() },
             ])
           }
           style={styles.reset}>
-          <Text style={styles.resetText}>Ulangi data contoh</Text>
+          <Text style={styles.resetText}>Hapus semua data</Text>
         </Pressable>
       </Scroll>
     </Screen>

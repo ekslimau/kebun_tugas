@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -33,6 +34,7 @@ const HOLD_MS = 600;
 export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
   const { courses, saveTask, deleteTask, setDone } = useStore();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [today] = useState(() => startOfDay(Date.now()));
   const [title, setTitle] = useState(initial?.title ?? '');
@@ -147,14 +149,29 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
             </Chip>
           ))}
         </ScrollView>
-        <View style={styles.wrap}>
-          {days.map((d) => (
-            <Chip key={d} selected={due === d} onPress={() => setDue(d)} style={styles.dayChip}>
-              <Text style={styles.dayName}>{DAYS_SHORT[new Date(d).getDay()]}</Text>
-              <Text style={styles.dayNumber}>{new Date(d).getDate()}</Text>
-            </Chip>
-          ))}
-        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weekRow}>
+          {days.map((d) => {
+            const isDue = due === d;
+            return (
+              <Chip
+                key={d}
+                selected={isDue}
+                onPress={() => {
+                  setDue(d);
+                  const offset = Math.round((d - today) / WEEK_MS);
+                  if (offset >= 0 && offset < WEEKS.length) setWeek(offset);
+                }}
+                style={styles.dayChip}>
+                <Text style={[styles.dayName, isDue && { color: C.white }]} numberOfLines={1}>
+                  {DAYS_SHORT[new Date(d).getDay()]}
+                </Text>
+                <Text style={[styles.dayNumber, isDue && { color: C.white }]} numberOfLines={1}>
+                  {new Date(d).getDate()}
+                </Text>
+              </Chip>
+            );
+          })}
+        </ScrollView>
         <View style={styles.wrap}>
           {HOURS.map((m) => (
             <Chip key={m} selected={dueTime === m} onPress={() => setDueTime(m)}>
@@ -198,7 +215,10 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
   if (!initial) {
     return (
       <Screen>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={[styles.content, { paddingBottom: 120 + insets.bottom }]}
+          keyboardShouldPersistTaps="handled">
           <BackButton />
           <View style={styles.titleRow}>
             <Title>Tanam tugas baru</Title>
@@ -206,7 +226,7 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
           </View>
           {fields}
         </ScrollView>
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: 12 + insets.bottom }]}>
           <Button label="Tanam tugas" disabled={title.trim().length === 0} onPress={() => save()} />
         </View>
       </Screen>
@@ -215,7 +235,10 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={[styles.content, { paddingBottom: 120 + insets.bottom }]}
+        keyboardShouldPersistTaps="handled">
         <View style={styles.titleRow}>
           <BackButton />
           <View style={{ flex: 1 }} />
@@ -249,7 +272,7 @@ export function TaskForm({ initial }: { initial?: TaskWithCourse }) {
         {fields}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: 12 + insets.bottom }]}>
         <Button label="Simpan perubahan" disabled={title.trim().length === 0} onPress={() => save()} />
         <Button label="Tandai selesai" variant="mint" disabled={blooming} onPress={complete} />
       </View>
@@ -296,9 +319,9 @@ const styles = StyleSheet.create({
   },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   weekRow: { flexDirection: 'row', gap: 8, paddingRight: 8 },
-  dayChip: { flex: 1, gap: 2, paddingHorizontal: 4 },
+  dayChip: { width: 48, gap: 2, paddingHorizontal: 4, flexShrink: 0 },
   dayName: { fontFamily: F.caption, fontSize: FS.caption, color: C.dim },
-  dayNumber: { fontFamily: F.display, fontSize: FS.h3, color: C.ink },
+  dayNumber: { fontFamily: F.display, fontSize: FS.h3, color: C.ink, fontVariant: ['tabular-nums'] },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

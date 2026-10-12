@@ -175,7 +175,7 @@ function TaskCard({
             <Plant stage={stageOf(task)} size={26} />
           </View>
           <View style={{ flex: 1, gap: 2 }}>
-            <Text style={styles.cardTitle}>{task.title}</Text>
+            <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">{task.title}</Text>
             <Text style={[styles.cardMeta, statusOf(task) === 'overdue' && { color: C.coral }]}>
               {task.course_name ?? 'Tanpa mata kuliah'} • {dueLabel(task)}
             </Text>

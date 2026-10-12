@@ -76,7 +76,7 @@ export default function Beranda() {
               <Text style={styles.agendaTime}>{fmtTime(row.at)}</Text>
               <View style={[styles.agendaCard, { backgroundColor: row.color }]}>
                 <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={styles.rowTitle}>{row.title}</Text>
+                  <Text style={styles.rowTitle} numberOfLines={1} ellipsizeMode="tail">{row.title}</Text>
                   <Text style={styles.rowMeta}>{row.meta}</Text>
                 </View>
                 {row.pill ? <Pill>{row.pill}</Pill> : null}

@@ -37,7 +37,7 @@ export function CourseList() {
           style={[styles.card, shadow(C.line, 4)]}>
           <View style={[styles.bar, { backgroundColor: course.color }]} />
           <View style={{ flex: 1, gap: 2 }}>
-            <Text style={styles.name}>{course.name}</Text>
+            <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">{course.name}</Text>
             <Text style={styles.meta}>
               {DAYS[course.day]} · {fmtTime(course.start)} - {fmtTime(course.end)}
             </Text>
